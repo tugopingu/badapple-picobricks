@@ -27,6 +27,9 @@ pico_sdk_init()
 
 add_executable(badapple badapple.c )
 
+
+target_compile_options(badapple PRIVATE -Os)
+
 pico_set_program_name(badapple "badapple")
 pico_set_program_version(badapple "0.1")
 
@@ -44,10 +47,14 @@ target_include_directories(badapple PRIVATE
 )
 
 # Add any user requested libraries
-target_link_libraries(badapple 
+target_link_libraries(badapple
         hardware_i2c
         hardware_timer
         hardware_clocks
+        hardware_pwm
+        hardware_gpio
+        pico_stdlib
+        pico_multicore
         )
 
 pico_add_extra_outputs(badapple)
