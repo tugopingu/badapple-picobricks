@@ -108,6 +108,7 @@ void core1_main() {
       sleep_us(messages[i].us);
     }
   }
+  pwm_set_enabled(slice_num, false);
 }
 
 int main() {
