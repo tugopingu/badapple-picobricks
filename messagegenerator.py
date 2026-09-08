@@ -2,7 +2,7 @@ import mido
 import math
 
 mid = mido.MidiFile("monophonicapple.mid")
-print("Message messages[] = {")
+print("const Message messages[] = {")
 for msg in mid:
     if msg.is_meta:
         continue

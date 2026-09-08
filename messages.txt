@@ -1,4 +1,4 @@
-Message messages[] = {
+const Message messages[] = {
 { 207 , 0 , 1 },
 { 207 , 13686 , 0 },
 { 207 , 424269 , 1 },
