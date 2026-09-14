@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: MIT
 /*
  * badapple.c
  *
@@ -29,7 +29,7 @@
 #define I2C_SDA 4
 #define I2C_SCL 5
 #define PIEZO 20
-#define FPS 15
+#define FPS 30
 
 #define SSD1306_HEIGHT 64
 #define SSD1306_WIDTH 128
@@ -265,8 +265,5 @@ int main() {
     absolute_time_t frameEnd = delayed_by_us(renderStart, 1000000 / FPS);
     sleep_until(frameEnd);
   }
-
-  while (true) {
-    sleep_ms(1000);
-  }
+  return 0;
 }

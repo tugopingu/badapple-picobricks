@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
 #
 # framebuffergenerator.py
 #
@@ -12,7 +12,7 @@ import numpy as np
 import cv2
 import sys
 
-badapple = cv2.VideoCapture("badapple15fps.webm")
+badapple = cv2.VideoCapture("badapple.webm")
 
 ret, prevFrame = badapple.read()
 if not ret:

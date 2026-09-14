@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: MIT
 #
 # messagegenerator.py
 #
@@ -13,6 +13,9 @@ import math
 
 mid = mido.MidiFile("monophonicapple.mid")
 print("const Message messages[] = {")
+# The video is black for around 1.3 seconds, so I added this gap
+# manually so the sound better matches the video
+print("{0, 1300000, 1}, {0, 0, 0}, ")
 for msg in mid:
     if msg.is_meta:
         continue
