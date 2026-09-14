@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# messagegenerator.py
+#
+# badapple-picobricks
+#
+# Copyright (c) 2026 Tuna Necmi İnal
+
 import mido
 import math
 
