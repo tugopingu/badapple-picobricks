@@ -6,7 +6,7 @@
 #
 # badapple-picobricks
 #
-# Copyright (c) 2026 Tuna Necmi İnal
+# Copyright (c) 2026
 
 import numpy as np
 import cv2

@@ -4,7 +4,6 @@
  *
  * badapple-picobricks
  *
- * Copyright (c) 2026 Tuna Necmi İnal
  * I took the display controlling functions from the pico examples here:
  * https://github.com/raspberrypi/pico-examples/blob/master/i2c/ssd1306_i2c/ssd1306_i2c.c
  *
@@ -30,6 +29,7 @@
 #define I2C_SCL 5
 #define PIEZO 20
 #define FPS 30
+#define DUTY 25
 
 #define SSD1306_HEIGHT 64
 #define SSD1306_WIDTH 128
@@ -183,7 +183,7 @@ void core1_main() {
   for (int i = 0; i < sizeof(messages) / sizeof(messages[0]); i++) {
     const absolute_time_t startingTimestamp = time_us_64();
     if (messages[i].note_on) {
-      pwm_set_freq_duty(slice_num, chan, messages[i].freq, 25);
+      pwm_set_freq_duty(slice_num, chan, messages[i].freq, DUTY);
       pwm_set_enabled(slice_num, false);
     } else {
       pwm_set_enabled(slice_num, true);
