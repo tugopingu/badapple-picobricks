@@ -31,7 +31,7 @@ while badapple.isOpened():
         ret, binary = cv2.threshold(gray, 127, 1, cv2.THRESH_BINARY)
         xorDelta = prevBinary ^ binary
 
-        flatXor = xorDelta.flatten(order="C")
+        flatXor = xorDelta.flatten(order="F")
         compressedPixels = []
         startingBit = False
         if flatXor[0] == 1:

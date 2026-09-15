@@ -7,12 +7,6 @@
  * I took the display controlling functions from the pico examples here:
  * https://github.com/raspberrypi/pico-examples/blob/master/i2c/ssd1306_i2c/ssd1306_i2c.c
  *
- * I wrote this project all by hand EXCEPT the for loop (lines 251-261) where I
- * translate the frame[] into the final buffer the display controller
- * understands. I didn't know my pixels were horizontal, I thought they were
- * vertical and the frame was getting sliced into eight pieces. I just wanted to
- * get it to work so I asked Claude for help. That is the only part of this
- * project which has been written by an LLM.
  */
 
 #include "hardware/clocks.h"
@@ -255,7 +249,7 @@ int main() {
           uint16_t byte = xorDeltaIdx / 8;
           uint8_t bit = xorDeltaIdx % 8;
           frame[byte] ^=
-              128 >> bit; // could be 1 << bit instead we'll try and see
+              1 << bit; // could be 1 << bit instead we'll try and see
           xorDeltaIdx++;
         }
       } else {
@@ -264,16 +258,11 @@ int main() {
       bitPattern ^= 1;
       frameDataIdx++;
     }
-    memset(buf, 0, SSD1306_BUF_LEN);
-    for (int row = 0; row < SSD1306_HEIGHT; ++row) {
-      for (int col = 0; col < SSD1306_WIDTH; ++col) {
-        int byteIdx = row * (SSD1306_WIDTH / 8) + col / 8;
-        int bitSet = frame[byteIdx] & (128 >> (col % 8));
-        if (bitSet) {
-          int page = row / 8;
-          buf[page * SSD1306_WIDTH + col] |= (1 << (row % 8));
-        }
-      }
+
+    for (int j = 0; j < 1024; ++j) {
+      uint8_t page = j % 8;
+      uint8_t column = j / 8;
+      buf[(page * 128) + column] = frame[j];
     }
     SSD1306_send_buf(buf, SSD1306_BUF_LEN);
 
