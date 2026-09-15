@@ -29,7 +29,8 @@
 #define I2C_SCL 5
 #define PIEZO 20
 #define FPS 30
-#define DUTY 25
+#define BUTTON 10
+#define LED 7
 
 #define SSD1306_HEIGHT 64
 #define SSD1306_WIDTH 128
@@ -177,16 +178,18 @@ uint32_t pwm_set_freq_duty(uint slice_num, uint chan, uint32_t f, int d) {
   return wrap;
 }
 
+uint8_t sound_on = 1;
+
 void core1_main() {
   uint slice_num = pwm_gpio_to_slice_num(PIEZO);
   uint chan = pwm_gpio_to_channel(PIEZO);
   for (int i = 0; i < sizeof(messages) / sizeof(messages[0]); i++) {
     const absolute_time_t startingTimestamp = time_us_64();
     if (messages[i].note_on) {
-      pwm_set_freq_duty(slice_num, chan, messages[i].freq, DUTY);
+      pwm_set_freq_duty(slice_num, chan, messages[i].freq, 50);
       pwm_set_enabled(slice_num, false);
     } else {
-      pwm_set_enabled(slice_num, true);
+      pwm_set_enabled(slice_num, sound_on);
     }
     const absolute_time_t endingTimestamp =
         delayed_by_us(startingTimestamp, messages[i].us);
@@ -198,6 +201,9 @@ void core1_main() {
 #include "framedata.txt"
 
 int main() {
+  // Give the display some time to power up, otherwise the display doesn't start
+  // up properly
+  sleep_ms(200);
   stdio_init_all();
 
   gpio_set_function(PIEZO, GPIO_FUNC_PWM);
@@ -208,6 +214,13 @@ int main() {
   gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
   gpio_pull_up(I2C_SDA);
   gpio_pull_up(I2C_SCL);
+
+  gpio_init(BUTTON);
+  gpio_init(LED);
+  gpio_set_dir(BUTTON, GPIO_IN);
+  gpio_set_dir(LED, GPIO_OUT);
+  gpio_pull_down(BUTTON);
+
   SSD1306_init();
 
   const uint8_t cmds[] = {SSD1306_SET_COL_ADDR,  0, 127,
@@ -221,6 +234,8 @@ int main() {
   uint16_t frameCount = 0;
   uint8_t frame[1024];
   memset(frame, 0, 1024);
+  absolute_time_t last_button_press = get_absolute_time();
+
   for (int i = 0; i < sizeof(frameSizes) / sizeof(frameSizes[0]); ++i) {
     absolute_time_t renderStart = get_absolute_time();
     uint8_t bitPattern = startingBits[frameCount];
@@ -261,6 +276,13 @@ int main() {
       }
     }
     SSD1306_send_buf(buf, SSD1306_BUF_LEN);
+
+    gpio_put(LED, sound_on ^ 1);
+    if (gpio_get(BUTTON) && renderStart - last_button_press > 100000) {
+      sound_on ^= 1;
+      last_button_press = renderStart;
+    }
+
     frameCount++;
     absolute_time_t frameEnd = delayed_by_us(renderStart, 1000000 / FPS);
     sleep_until(frameEnd);
