@@ -25,8 +25,8 @@ jobs:
 
     - name: Install build tools
       run: | 
-        sudo apt update
-        sudo apt install -y git cmake gcc-arm-none-eabi build-essential python3
+        sudo apt-get update
+        sudo apt-get install -y git cmake gcc-arm-none-eabi build-essential python3
         pip install opencv-python numpy mido
 
     - name: Install Pico SDK
