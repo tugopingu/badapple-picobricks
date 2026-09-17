@@ -15,8 +15,7 @@ repository](https://github.com/raspberrypi/pico-examples/blob/master/i2c/ssd1306
 
 ## Building and Setup
 
-### **This section assumes you're using Linux or any other Unix-like OS, since
-using development tools are much more straightforward with the command line**
+### This section assumes you're using Linux or any other Unix-like OS, since using development tools are much more straightforward with the command line
 
 To prepare the audio and video files, which are just text files including C
 arrays containing data, run their respective python scripts and redirect the
