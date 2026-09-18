@@ -2,10 +2,11 @@ name: Build the final .uf2 image
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
-  workflow_call:
+    branches: ["main"]
+  release:
+    types: [published]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -18,47 +19,56 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-    - name: Install build tools
-      run: | 
-        sudo apt-get update
-        sudo apt-get install -y git cmake gcc-arm-none-eabi build-essential python3
-        pip install opencv-python numpy mido
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git cmake gcc-arm-none-eabi build-essential python3
+          pip install opencv-python numpy mido
 
-    - name: Install Pico SDK
-      run: |
-        cd
-        mkdir pico
-        cd pico
-        git clone -b master https://github.com/raspberrypi/pico-sdk.git
-        cd pico-sdk
-        git submodule update --init
-        cd ${{github.workspace}}
+      - name: Install Pico SDK
+        run: |
+          cd
+          mkdir pico
+          cd pico
+          git clone -b master https://github.com/raspberrypi/pico-sdk.git
+          cd pico-sdk
+          git submodule update --init
+          cd ${{github.workspace}}
 
-    - name: Process audio and video
-      run: |
-        python3 framebuffergenerator.py > framedata.txt
-        python3 messagegenerator.py > messages.txt
+      - name: Process audio and video
+        run: |
+          python3 framebuffergenerator.py > framedata.txt
+          python3 messagegenerator.py > messages.txt
 
-    - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: |
-        export PICO_SDK_PATH="$HOME/pico/pico-sdk"
-        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Configure CMake
+        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+        run: |
+          export PICO_SDK_PATH="$HOME/pico/pico-sdk"
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-    - name: Build
-      # Build your program with the given configuration
-      run: |
-        export PICO_SDK_PATH="$HOME/pico/pico-sdk"
-        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: Build
+        # Build your program with the given configuration
+        run: |
+          export PICO_SDK_PATH="$HOME/pico/pico-sdk"
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - name: Upload uf2 artifact
-      uses: actions/upload-artifact@v7
-      with:
-        name: badapple
-        path: build/badapple.uf2
-        archive: false
-      
+      - name: Upload uf2 artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: badapple
+          path: build/badapple.uf2
+          archive: false
+
+      - name: Attack uf2 to release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" build/badapple.uf2 --clobber
