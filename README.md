@@ -13,7 +13,17 @@ the MIDI from [onlinesequencer.net user
 code from [an example in the pico examples
 repository](https://github.com/raspberrypi/pico-examples/blob/master/i2c/ssd1306_i2c/ssd1306_i2c.c).
 
-## Building and Setup
+## How To Use
+
+Just get the .uf2 image from the latest release and flash it on your Pico by
+powering it up while holding the white BOOTSEL button and copy the .uf2 image to
+the RPI-RP2 device that should appear on your storage devices. After that,
+you're good to go! You don't really need to do anything, it should start up 
+after a second and a half. One feature I added is muting. By pressing the
+picobricks button you can toggle audio. The LED next to the button lights up
+when audio is muted.
+
+## Building
 
 ### This section assumes you're using Linux or any other Unix-like OS, since using development tools are much more straightforward with the command line
 
@@ -32,13 +42,6 @@ white "BOOTSEL" button, putting it into the USB bootloader mode. The Pico will
 appear as a storage device named `RPI-RP2`. Copy the .uf2 file over to the
 virtual `RPI-RP2` storage device and your picobricks should
 be ready to play Bad Apple!!
-
-## How To Use
-
-You don't really need to do anything, it should start up after a second and a
-half. One feature I added is muting. By pressing the picobricks button you can
-toggle audio. The LED next to the button lights up when
-audio is muted.
 
 ## It didn't work!
 
