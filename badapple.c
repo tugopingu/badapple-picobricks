@@ -178,16 +178,16 @@ void core1_main() {
   uint slice_num = pwm_gpio_to_slice_num(PIEZO);
   uint chan = pwm_gpio_to_channel(PIEZO);
   for (int i = 0; i < sizeof(messages) / sizeof(messages[0]); i++) {
-    const absolute_time_t startingTimestamp = time_us_64();
+    const absolute_time_t starting_timestamp = time_us_64();
     if (messages[i].note_on) {
       pwm_set_freq_duty(slice_num, chan, messages[i].freq, 50);
       pwm_set_enabled(slice_num, false);
     } else {
       pwm_set_enabled(slice_num, sound_on);
     }
-    const absolute_time_t endingTimestamp =
-        delayed_by_us(startingTimestamp, messages[i].us);
-    sleep_until(endingTimestamp);
+    const absolute_time_t ending_timestamp =
+        delayed_by_us(starting_timestamp, messages[i].us);
+    sleep_until(ending_timestamp);
   }
   pwm_set_enabled(slice_num, false);
 }
@@ -224,40 +224,40 @@ int main() {
   uint8_t buf[SSD1306_BUF_LEN];
   memset(buf, 0, SSD1306_BUF_LEN);
 
-  uint32_t frameDataIdx = 0;
-  uint16_t frameCount = 0;
+  uint32_t frame_data_idx = 0;
+  uint16_t frame_count = 0;
   uint8_t frame[1024];
   memset(frame, 0, 1024);
   absolute_time_t last_button_press = get_absolute_time();
   uint8_t previous_button_state = 0;
 
-  for (int i = 0; i < sizeof(frameSizes) / sizeof(frameSizes[0]); ++i) {
-    absolute_time_t renderStart = get_absolute_time();
-    uint8_t bitPattern = startingBits[frameCount];
-    uint16_t xorDeltaIdx = 0;
-    for (int j = 0; j < frameSizes[i]; ++j) {
-      uint16_t bitRunLength = 0;
-      if (frameData[frameDataIdx] < 128) {
-        bitRunLength = frameData[frameDataIdx];
+  for (int i = 0; i < sizeof(frame_sizes) / sizeof(frame_sizes[0]); ++i) {
+    absolute_time_t render_start = get_absolute_time();
+    uint8_t bit_pattern = starting_bits[frame_count];
+    uint16_t xor_delta_idx = 0;
+    for (int j = 0; j < frame_sizes[i]; ++j) {
+      uint16_t bit_sector_length = 0;
+      if (frame_data[frame_data_idx] < 128) {
+        bit_sector_length = frame_data[frame_data_idx];
       } else {
-        bitRunLength = ((frameData[frameDataIdx] & ~(1 << 7)) << 8) +
-                       frameData[frameDataIdx + 1];
-        frameDataIdx++;
+        bit_sector_length = ((frame_data[frame_data_idx] & ~(1 << 7)) << 8) +
+                            frame_data[frame_data_idx + 1];
+        frame_data_idx++;
       }
-      bitRunLength++;
-      if (bitPattern) {
-        for (int k = 0; k < bitRunLength; ++k) {
-          uint16_t byte = xorDeltaIdx / 8;
-          uint8_t bit = xorDeltaIdx % 8;
+      bit_sector_length++;
+      if (bit_pattern) {
+        for (int k = 0; k < bit_sector_length; ++k) {
+          uint16_t byte = xor_delta_idx / 8;
+          uint8_t bit = xor_delta_idx % 8;
           frame[byte] ^=
               1 << bit; // could be 1 << bit instead we'll try and see
-          xorDeltaIdx++;
+          xor_delta_idx++;
         }
       } else {
-        xorDeltaIdx += bitRunLength;
+        xor_delta_idx += bit_sector_length;
       }
-      bitPattern ^= 1;
-      frameDataIdx++;
+      bit_pattern ^= 1;
+      frame_data_idx++;
     }
 
     for (int j = 0; j < 1024; ++j) {
@@ -269,15 +269,15 @@ int main() {
 
     gpio_put(LED, sound_on ^ 1);
     if (gpio_get(BUTTON) && !previous_button_state &&
-        renderStart - last_button_press > 100000) {
+        render_start - last_button_press > 100000) {
       sound_on ^= 1;
-      last_button_press = renderStart;
+      last_button_press = render_start;
     }
 
-    frameCount++;
+    frame_count++;
     previous_button_state = gpio_get(BUTTON);
-    absolute_time_t frameEnd = delayed_by_us(renderStart, 1000000 / FPS);
-    sleep_until(frameEnd);
+    absolute_time_t frame_end = delayed_by_us(render_start, 1000000 / FPS);
+    sleep_until(frame_end);
   }
   return 0;
 }
