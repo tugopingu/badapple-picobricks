@@ -229,6 +229,7 @@ int main() {
   uint8_t frame[1024];
   memset(frame, 0, 1024);
   absolute_time_t last_button_press = get_absolute_time();
+  uint8_t previous_button_state = 0;
 
   for (int i = 0; i < sizeof(frameSizes) / sizeof(frameSizes[0]); ++i) {
     absolute_time_t renderStart = get_absolute_time();
@@ -267,12 +268,14 @@ int main() {
     SSD1306_send_buf(buf, SSD1306_BUF_LEN);
 
     gpio_put(LED, sound_on ^ 1);
-    if (gpio_get(BUTTON) && renderStart - last_button_press > 100000) {
+    if (gpio_get(BUTTON) && !previous_button_state &&
+        renderStart - last_button_press > 100000) {
       sound_on ^= 1;
       last_button_press = renderStart;
     }
 
     frameCount++;
+    previous_button_state = gpio_get(BUTTON);
     absolute_time_t frameEnd = delayed_by_us(renderStart, 1000000 / FPS);
     sleep_until(frameEnd);
   }
