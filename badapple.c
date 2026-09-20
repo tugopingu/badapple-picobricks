@@ -155,10 +155,9 @@ void SSD1306_init() {
 typedef struct {
   uint16_t freq;
   uint32_t us;
-  uint8_t note_on;
-} Message;
+} Note;
 
-#include "messages.txt"
+#include "audio.txt"
 
 uint32_t pwm_set_freq_duty(uint slice_num, uint chan, uint32_t f, int d) {
   uint32_t clock = 125000000;
@@ -177,17 +176,17 @@ uint8_t sound_on = 1;
 void core1_main() {
   uint slice_num = pwm_gpio_to_slice_num(PIEZO);
   uint chan = pwm_gpio_to_channel(PIEZO);
-  for (int i = 0; i < sizeof(messages) / sizeof(messages[0]); i++) {
+  for (int i = 0; i < sizeof(notes) / sizeof(notes[0]); i++) {
     const absolute_time_t starting_timestamp = time_us_64();
-    if (messages[i].note_on) {
-      pwm_set_freq_duty(slice_num, chan, messages[i].freq, 50);
-      pwm_set_enabled(slice_num, false);
-    } else {
+    sleep_us(notes[i].us / 50);
+    if (notes[i].freq) {
+      pwm_set_freq_duty(slice_num, chan, notes[i].freq, 50);
       pwm_set_enabled(slice_num, sound_on);
     }
     const absolute_time_t ending_timestamp =
-        delayed_by_us(starting_timestamp, messages[i].us);
+        delayed_by_us(starting_timestamp, notes[i].us);
     sleep_until(ending_timestamp);
+    pwm_set_enabled(slice_num, false);
   }
   pwm_set_enabled(slice_num, false);
 }

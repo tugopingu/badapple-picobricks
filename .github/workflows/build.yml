@@ -44,7 +44,7 @@ jobs:
       - name: Process audio and video
         run: |
           python3 framebuffergenerator.py > framedata.txt
-          python3 messagegenerator.py > messages.txt
+          python3 audiogenerator.py > audio.txt
 
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
