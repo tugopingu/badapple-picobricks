@@ -21,10 +21,10 @@ for msg in mid:
         continue
     if msg.type == "note_off":
         freq = math.floor((2 ** ((msg.note - 69) / 12)) * 440)
-        us = math.floor((msg.time * 1000000) * 0.995) # This is to roughy counteract time drift
+        us = math.floor(msg.time * 1000000)
         print("{", freq, ", ", us, "},")
     elif msg.type == "note_on":
-        silence = math.floor((msg.time * 1000000) * 0.995)
+        silence = math.floor(msg.time * 1000000)
         if silence != 0:
             print("{0, ", silence, "},")
 print("};")

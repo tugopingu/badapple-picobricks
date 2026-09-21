@@ -1,4 +1,5 @@
 # *If it exists, it must play Bad Apple*
+
 # -Sun Tzu, Art of War
 
 ## Licensing
@@ -18,7 +19,7 @@ repository](https://github.com/raspberrypi/pico-examples/blob/master/i2c/ssd1306
 Just get the .uf2 image from the latest release and flash it on your Pico by
 powering it up while holding the white BOOTSEL button and copy the .uf2 image to
 the RPI-RP2 device that should appear on your storage devices. After that,
-you're good to go! You don't really need to do anything, it should start up 
+you're good to go! You don't really need to do anything, it should start up
 after a second and a half. One feature I added is muting. By pressing the
 picobricks button you can toggle audio. The LED next to the button lights up
 when audio is muted.
@@ -43,7 +44,7 @@ appear as a storage device named `RPI-RP2`. Copy the .uf2 file over to the
 virtual `RPI-RP2` storage device and your picobricks should
 be ready to play Bad Apple!!
 
-## It didn't work!
+## It didn't work
 
 Your picobricks parts are most likely wired up differently compared to what I
 have. In that case, you need to change the GPIO pin definitons at the start of
@@ -57,7 +58,8 @@ i2c SDA and SCL are 4 and 5 respectively.
 
 I manually trimmed down the [MIDI file](https://onlinesequencer.net/4140941#) I
 found from onlinesequencer.net so it only had one note playing at a time, due to
-how the piezoelectric buzzer works. I plan to make it more detailed, since the
+how the piezoelectric buzzer works. I also set the BPM to 138, it is 137 by
+default and causes time drift.I plan to make it more detailed, since the
 start of the song sounds too plain compared to
 the original song. The python script `messagegenerator.py` then later parses the
 MIDI file and outputs the events as a C array of Message structs. The structure
