@@ -4,7 +4,7 @@
 
 [Watch the demo on Youtube](https://www.youtube.com/watch?v=F0QgG1Q2v1c)
 
-![demo-gif](https://i.imgur.com/ZTsdeeb.gif)
+<img src="https://i.imgur.com/ZTsdeeb.gif" alt="Demo gif">
 
 ## Licensing
 
