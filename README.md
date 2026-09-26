@@ -1,8 +1,10 @@
 # *If it exists, it must play Bad Apple*
 
 # -Sun Tzu, Art of War
-
-[Watch the demo on Youtube](https://www.youtube.com/watch?v=F0QgG1Q2v1c)
+<a href="https://www.youtube.com/watch?v=F0QgG1Q2v1c">
+  <img width="2876" height="2156" alt="out" src="https://github.com/user-attachments/assets/9b257717-e005-4e25-a21c-fd2152f21fd3" />
+  Watch the demo on Youtube
+</a>
 
 ## Licensing
 
